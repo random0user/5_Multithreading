@@ -1,0 +1,4 @@
+﻿  Multithreading.cpp
+c:\users\andrey\source\repos\multithreading\multithreading\multithreading.cpp(31): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Multithreading.vcxproj -> C:\Users\Andrey\source\repos\Multithreading\Debug\Multithreading.exe
+  Multithreading.vcxproj -> C:\Users\Andrey\source\repos\Multithreading\Debug\Multithreading.pdb (Partial PDB)
