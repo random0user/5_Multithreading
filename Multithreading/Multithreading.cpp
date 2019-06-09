@@ -12,7 +12,7 @@ using namespace std;
 using namespace std::chrono;
 
 //Простое перемножение, по определению
-void simple_multiplication(int** A, int** B, int** result, int size)
+void simple_multiplication(int** A, int** B, int**& result, int size)
 {
 	for (int i = 0; i < size; i++)
 	{
@@ -50,7 +50,7 @@ void thread_calculate(int** A, int** B, int** result, int Lborder, int Rborder, 
 
 int main()
 {
-	int SIZE = 1000;
+	const int SIZE = 10;
 
 
 
@@ -67,6 +67,9 @@ int main()
 	for (int i = 0; i < SIZE; i++)
 		C[i] = new int[SIZE];
 
+	
+
+
 
 	fill(A, SIZE);
 	fill(B, SIZE);
@@ -74,7 +77,14 @@ int main()
 	int num_threads = 0,j=0;
 	cout << "Enter maximum number of threads (takes time): ";
 	cin >> j;
-	
+
+	/*int*** output = new int**[j]; //Массив выходных матриц
+	for (int n = 0; n < num_threads; n++)
+	{
+		output[n] = new int*[SIZE];
+		for (int i = 0; i < SIZE; i++)
+			output[n][i] = new int[SIZE];
+	}*/
 
 	//Тут прогнать несколько раз для кол-ва потоков
 	for (int num_threads = 1; num_threads <=j; num_threads++)
@@ -84,22 +94,38 @@ int main()
 		thread* thr = new thread[num_threads];
 		//Для всех потоков кроме последнего
 		int rows_from = 1;
+		
+
 		for (int i = 0; i < num_threads - 1; i++)
 		{
+			
 			thr[i] = thread(thread_calculate, A, B, C, rows_from, rows_from + rows_per_thread - 1, SIZE);
 			rows_from += (rows_per_thread + 1);
-			thr[i].join();
+			//thr[i].join();
 
 		}
 		//Для посленнего потока
 		thr[num_threads - 1] = thread(thread_calculate, A, B, C, rows_from, SIZE, SIZE);
-		thr[num_threads - 1].join();
+		for (int i = 0; i <= num_threads - 1; i++)
+			thr[i].join();
 		int end = clock();
+
+		ofstream file_matr("matrix.txt", ios_base::app);
+		for (int i = 0; i < SIZE; i++)
+		{
+			for (int j = 0; j < SIZE; j++)
+				file_matr << C[i][j] << " ";
+			file_matr << endl;
+		}
+		file_matr << endl;
+
 		ofstream file("output.txt", ios_base::app);
 		file << num_threads << " " << end - start << endl;
 		for (int i = 0; i < num_threads; i++)
 			thr[i].~thread();
 		delete [] thr;
+
+		
 	}
     return 0;
 }
